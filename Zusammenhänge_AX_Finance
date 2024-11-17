@@ -1,0 +1,25 @@
+-- Buchungsdokument
+Select Top 100 * from [BI_RAW].[ax].GeneralJournalEntry AS GJE
+Where Recid = '5644252469'
+
+-- Buchungssätze
+SELECT 
+    ROW_NUMBER() OVER (
+        PARTITION BY GJAE.GeneralJournalEntry 
+        ORDER BY GJAE.RecId ASC
+    ) AS RowNum,
+    GJAE.*
+FROM 
+    [BI_RAW].[ax].GeneralJournalAccountEntry AS GJAE
+WHERE 
+    GJAE.GeneralJournalEntry = '5644252469';
+
+-- Jounral
+Select ljt.* from [BI_RAW].[ax].GeneralJournalEntry gje
+inner join   [BI_RAW].[ax].ledgerentryjournal lej
+on lej.RECID = gje.LEDGERENTRYJOURNAL
+inner join [BI_RAW].[ax].ledgerjournaltable as ljt
+on ljt.DATAAREAID = gje.SUBLEDGERVOUCHERDATAAREAID
+and ljt.JOURNALNUM = lej.JOURNALNUMBER
+WHERE 
+    gje.Recid = '5644252469'
